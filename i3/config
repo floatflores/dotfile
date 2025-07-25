@@ -13,7 +13,7 @@ set $mod Mod1
 
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
-font pango:JetBrainsMonoNerdFontMono SemiBold 13
+font pango:MapleMono-NF-CN-Bold 13
 
 gaps inner 2
 gaps outer 2
@@ -30,6 +30,9 @@ exec --no-startup-id dex --autostart --environment i3
 
 exec dbus-launch --sh-syntax --exit--with-session
 exec --no-startup-id fcitx5
+exec --no-startup-id discord
+exec --no-startup-id steam
+
 # exec_always pkill picom
 exec_always --no-startup-id picom
 exec_always --no-startup-id feh --bg-center ~/.local/share/wallpaper/furina-hug.png
@@ -38,7 +41,7 @@ exec_always --no-startup-id feh --bg-center ~/.local/share/wallpaper/furina-hug.
 
 # xss-lock grabs a logind suspend inhibit lock and will use i3lock to lock the
 # screen before suspend. Use loginctl lock-session to lock your screen.
-exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork
+exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock --nofork -i ~/.local/share/wallpaper/furina-hug.png
 
 # NetworkManager is the most popular way to manage wireless networks on Linux,
 # and nm-applet is a desktop environment-independent system tray GUI for it.
@@ -46,10 +49,17 @@ exec --no-startup-id nm-applet
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
-bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
-bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +2% && pkill -SIGRTMIN+1 i3blocks
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -2% && pkill -SIGRTMIN+1 i3blocks
+
+# Want mute all input-output in one action
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && pactl set-source-mute @DEFAULT_SOURCE@ toggle && pkill -SIGRTMIN+1 i3blocks
+
+# bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+# Use brightnessctl to adjust brightness
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +10% && pkill -SIGRTMIN+2 i3blocks
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 10%- && pkill -SIGRTMIN+2 i3blocks
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -64,8 +74,16 @@ bindsym $mod+Return exec kitty
 # kill focused window
 bindsym $mod+q kill
 
+# screen-shortcut tool
+bindsym Print exec "killall flameshot; flameshot gui"
+bindsym $mod+Shift+s exec "killall flameshot; flameshot screen"
+
+# screen-lock
+bindsym $mod+Shift+x exec "i3lock -i ~/.local/share/wallpaper/furina-hug.png"
+
 # start dmenu (a program launcher)
-bindsym $mod+d exec --no-startup-id dmenu_run
+# bindsym $mod+d exec --no-startup-id dmenu_run
+bindsym $mod+d exec --no-startup-id rofi -show drun -show-icons
 # A more modern dmenu replacement is rofi:
 # bindcode $mod+40 exec "rofi -modi drun,run -show drun"
 # There also is i3-dmenu-desktop which only displays applications shipping a
@@ -197,12 +215,15 @@ bindsym $mod+r mode "resize"
 # finds out, if available)
 bindsym $mod+n bar mode toggle
 bar {
-  status_command i3status --config ~/.config/i3/i3status.conf
-	position bottom
+  # status_command i3status --config ~/.config/i3/i3status.conf
+  status_command i3blocks -c ~/.config/i3/i3blocks.conf
+    position bottom
 	font pango: JetBrainsMonoNerdFontPropo Bold 14
 	separator_symbol " "
 	colors {
-		background #000000
-		statusline #A4A4A4
-	}
+		background #2e3440
+        # statusline #A4A4A4
+        statusline #d8dee9	
+    }
+    tray_output primary 
 }
