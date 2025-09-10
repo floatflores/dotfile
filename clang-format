@@ -1,7 +1,0 @@
-BasedOnStyle: LLVM
-AlignArrayOfStructures: Right
-AllowShortBlocksOnASingleLine: Empty
-AllowShortCaseLabelsOnASingleLine: false
-BreakTemplateDeclarations: Yes
-PenaltyBreakTemplateDeclaration: 1
-BreakBeforeBraces: Linux
